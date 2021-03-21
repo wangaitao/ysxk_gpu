@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from local.utils import ProgressBar
+# from local.utils import ProgressBar
 from tools.data_helper import load_js
 from config import *
 import pandas as pd
@@ -787,13 +787,13 @@ def keybert(query_text, topK=3):
     print("Start Keybert...")
     start_time = time.time()
 
-    bar = ProgressBar('jieba kw')
+    #bar = ProgressBar('jieba kw')
     token_cws, kw_a_mask = get_token_mask(query_text)
-    bar.complete()
+    #bar.complete()
 
     I, D = fs.ann_search_faiss(query=query_text, topn=10)
 
-    bar = ProgressBar('get feature')
+    #bar = ProgressBar('get feature')
     label = '0'
     instances = []
     for i, idx in enumerate(I[0]):
@@ -840,14 +840,14 @@ def keybert(query_text, topK=3):
     # instances.append(instance)
     # id += 1
     # print("single prediction input Takes ", time.time() - start_time, " s")
-    bar.complete()
+    #bar.complete()
     df = pd.DataFrame(columns=['qid', 'probability'])
 
-    bar = ProgressBar('keybert:predict')
+    #bar = ProgressBar('keybert:predict')
     data = json.dumps({"signature_name": "serving_default", "instances": instances})
     response = requests.post(endpoints, data=data, headers=headers)
     prediction = json.loads(response.text)['predictions']
-    bar.complete()
+    #bar.complete()
 
     qid_probs = id2titles_df.loc[I[0], ['qid', 'title']]
     qid_probs['probability'] = [x[1] for x in prediction]
